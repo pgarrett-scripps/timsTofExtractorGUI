@@ -1,0 +1,11 @@
+Requirements:
+required: numpy
+optional: pyinstaller
+
+How to Run:
+1) python app.py
+
+Generate .exe:
+1) pyinstaller app.py
+2) will genreate app under dist folder
+3) move lib folder to app folder
