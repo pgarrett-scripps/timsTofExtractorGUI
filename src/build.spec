@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['src\\app.py'],
+a = Analysis(['app.py'],
              pathex=['C:\\Users\\diash\\repos\\timsTofExtractorGUI'],
              binaries=[],
              datas=[('src\\\\tdf-sdk-2.8.7_pre', 'tdf-sdk-2.8.7_pre')],
