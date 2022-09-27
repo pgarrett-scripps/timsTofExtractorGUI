@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import filedialog as fd, messagebox
 from tkinter import *
 
+from extract_msn_nopd import run_timstof_conversion
 from timstof_utils import generate_ms1, generate_ms2
 
 logging.basicConfig(
