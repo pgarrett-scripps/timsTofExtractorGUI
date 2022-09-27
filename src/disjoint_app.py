@@ -8,7 +8,7 @@ import sys
 from PyQt5.QtWidgets import (QFileDialog, QAbstractItemView, QListView,
                              QTreeView, QApplication, QDialog)
 
-RAW_CONVERTOR_PATH = Path('C:\\Users\\diash\\scripts\\tdf2ms2\\extract_msn_nopd.py')
+RAW_CONVERTOR_PATH = Path(r'src/timstof_extractor/src/extract_msn_nopd.py')
 
 
 class getExistingDirectories(QFileDialog):

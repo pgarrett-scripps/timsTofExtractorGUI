@@ -128,7 +128,7 @@ class RawFileTinker(Frame):
                 self.button['state'] = NORMAL
                 return
 
-        gen = generate_ms2(self.raw_folder)
+        gen = run_timstof_conversion(self.raw_folder)
 
         for percent_done in gen:
             print(percent_done)
