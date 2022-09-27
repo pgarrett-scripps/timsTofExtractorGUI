@@ -1,11 +1,21 @@
-Requirements:
-required: numpy
-optional: pyinstaller
+Timstof Extractor GUI
+
 
 How to Run:
-1) python app.py
+pip clone https://github.com/pgarrett-scripps/timsTofExtractorGUI.git
+pip install -r requirements.txt
+python src/app.py
 
-Generate .exe:
-1) pyinstaller app.py
-2) will genreate app under dist folder
-3) move lib folder to app folder
+How to compile exe:
+pip clone
+pip install -r requirements.txt
+pyinstaller src/app.py --add-data "src\\tdf-sdk-2.8.7_pre;tdf-sdk-2.8.7_pre"
+.\dist\app\app.exe
+
+
+Github Action automatically compiles exe:
+
+    image: https://hub.docker.com/r/cdrx/pyinstaller-windows
+
+        Python version: 3.7.9
+        pyinstaller version: 3.6
