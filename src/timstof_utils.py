@@ -178,6 +178,7 @@ def generate_ms2(analysis_dir):
             precursor_collision_energy_map[prec_id] = ce
         # print msms_data[0:5]
         all_frame = select_all_Frames(conn)
+        frame_id_to_frame = {int(frame[0]): frame for frame in all_frame}
         # print all_frame[0:5]
         precursor_list = select_all_Precursors(conn)
         for row in precursor_list:
@@ -234,7 +235,7 @@ def generate_ms2(analysis_dir):
                 mz_int_arr = td.readPasefMsMs([prc_id_int])
                 parent_index = int(parent)
                 scan_id = ms2_scan_map[parent_index][prc_id_int]
-                rt_time = float(all_frame[parent_index][1])
+                rt_time = float(frame_id_to_frame[parent_index][1])
                 k0 = td.scanNumToOneOverK0(parent_index, [scan_number])
                 mz_arr = mz_int_arr[prc_id_int][0]
                 collision_energy = precursor_collision_energy_map[prc_id_int]
