@@ -13,11 +13,11 @@ print(sys.platform[:5])
 p = os.path.dirname(os.path.abspath(__file__))
 
 if sys.platform[:5] == "win32":
-    libname = "lib\win64\\timsdata.dll"
+    libname = p+r"\tdf-sdk-2.8.7_pre\lib\win64\timsdata.dll"
 elif sys.platform[:5] == "win64":
-    libname = "lib\win64\\timsdata.dll"
+    libname = p+r"\tdf-sdk-2.8.7_pre\lib\win64\timsdata.dll"
 elif sys.platform[:5] == "linux":
-    libname = p+"/lib/linux64/libtimsdata.so"
+    libname = p+r"/tdf-sdk-2.8.7_pre/lib/linux64/libtimsdata.so"
 else:
     raise Exception("Unsupported platform.")
 print(libname)
