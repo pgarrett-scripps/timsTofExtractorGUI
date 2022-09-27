@@ -1,2 +1,2 @@
-numpy~=1.23.3
-PyQt5~=5.15.7
+numpy
+PyQt5
