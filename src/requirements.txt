@@ -1,3 +1,2 @@
-numpy~=1.21.6
 PyQt5~=5.15.7
 tdfextractor~=0.1.1
