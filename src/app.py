@@ -119,17 +119,18 @@ class RawFileTinker(Frame):
 
         contains_file = os.path.exists(file_path)
         if contains_file:
-            MsgBox = messagebox.askquestion('File Exists', 'Ms2 File already exists... Click yes to overwrite. No to abort. ',
+            MsgBox = messagebox.askquestion('File Exists', 'Ms2 File already exists... Click yes to overwrite.',
                                                icon='warning')
-            if MsgBox == 'yes':
-                pass
-            else:
+            if MsgBox == 'no':
                 self.button_ms1['state'] = NORMAL
                 self.button_ms2['state'] = NORMAL
                 self.button['state'] = NORMAL
                 return
 
         write_ms2_file(self.raw_folder)
+
+        self.percent_done_ms1_text['text'] = str(round(100.00, 2)) + "%"
+        self.update()
 
         self.button_ms1['state'] = NORMAL
         self.button_ms2['state'] = NORMAL

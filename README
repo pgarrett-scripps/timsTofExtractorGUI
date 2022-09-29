@@ -2,18 +2,20 @@ Timstof Extractor GUI
 
 
 How to Run:
-pip clone https://github.com/pgarrett-scripps/timsTofExtractorGUI.git
-pip install -r requirements.txt
-python src/app.py
+> pip clone https://github.com/pgarrett-scripps/timsTofExtractorGUI.git
+> pip install -r requirements.txt
+> python src/app.py
 
 How to compile exe:
-pip clone
-pip install -r requirements.txt
-pyinstaller src/app.py --add-data "src\\tdf-sdk-2.8.7_pre;tdf-sdk-2.8.7_pre"
-.\dist\app\app.exe
+> pip clone
+> pip install -r requirements.txt
+> pyinstaller -F --add-data venv/Lib/site-packages/tdfpy/timsdata.dll;. src\app.py
+> .\dist\app.exe
 
 
-Github Action automatically compiles exe:
+Github Action automatically compiles exe (Depriciated):
+
+    TODO: Make custom action to gen exe and publish to github
 
     image: https://hub.docker.com/r/cdrx/pyinstaller-windows
 
