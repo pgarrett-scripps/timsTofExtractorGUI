@@ -1,10 +1,12 @@
 import logging
 import os
-import tkinter as tk
+from pathlib import Path
 from tkinter import filedialog as fd, messagebox
 from tkinter import *
+import sys
 
-from timstof_utils import generate_ms1, generate_ms2
+from PyQt5.QtWidgets import QFileDialog, QListView, QAbstractItemView, QTreeView, QApplication, QDialog
+from tdfextractor.ms2_extractor import write_ms2_file
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -92,6 +94,9 @@ class RawFileTinker(Frame):
                 self.button['state'] = NORMAL
                 return
 
+        def generate_ms1(raw_folder):
+            return 'NotImplemented'
+
         gen = generate_ms1(self.raw_folder)
 
         for percent_done in gen:
@@ -113,48 +118,42 @@ class RawFileTinker(Frame):
         self.button_ms1['state'] = DISABLED
         self.button['state'] = DISABLED
 
-        file_path = os.path.basename(self.raw_folder).split('.')[0] + '.ms2'
-        file_path = os.path.join(self.raw_folder, file_path)
-
-        contains_file = os.path.exists(file_path)
-        if contains_file:
-            MsgBox = messagebox.askquestion('File Exists', 'Ms2 File already exists... Click yes to overwrite. No to abort. ',
-                                               icon='warning')
-            if MsgBox == 'yes':
-                pass
-            else:
-                self.button_ms1['state'] = NORMAL
-                self.button_ms2['state'] = NORMAL
-                self.button['state'] = NORMAL
-                return
-
-        gen = generate_ms2(self.raw_folder)
-
-        for percent_done in gen:
-            print(percent_done)
-            self.percent_done_ms2_text['text'] = str(round(percent_done, 2)) + "%"
+        for i, raw_folder in enumerate(self.raw_folders):
+            self.dfolder_label['text'] = f'Extracting: {Path(raw_folder).stem}'
+            self.percent_done_ms2_text['text'] = f'File {i+1} of {len(self.raw_folders)}'
             self.update()
+            write_ms2_file(raw_folder)
 
-        messagebox.showinfo("Done!", "File Path:\n" + file_path)
+        self.percent_done_ms2_text['text'] = str(round(100.00, 2)) + "%"
+        self.update()
+
+        messagebox.showinfo('Done!', 'Ms2 Files created!')
 
         self.button_ms1['state'] = NORMAL
         self.button_ms2['state'] = NORMAL
         self.button['state'] = NORMAL
 
     def load_file(self):
-        self.raw_folder = fd.askdirectory(
-            title='Open a file',
-            initialdir='/')
 
-        if not os.path.isdir(self.raw_folder) or self.raw_folder == "":
-            messagebox.showinfo("Hmmmm", "Selected Path is not a Directory")
-            return
+        class getExistingDirectories(QFileDialog):
+            def __init__(self, *args):
+                super(getExistingDirectories, self).__init__(*args)
+                self.setOption(self.DontUseNativeDialog, True)
+                self.setFileMode(self.Directory)
+                self.setOption(self.ShowDirsOnly, True)
+                self.findChildren(QListView)[0].setSelectionMode(QAbstractItemView.ExtendedSelection)
+                self.findChildren(QTreeView)[0].setSelectionMode(QAbstractItemView.ExtendedSelection)
 
-        if ".d" not in self.raw_folder:
-            messagebox.showinfo("Hmmmm", "Selected Path is not a timsTof .d folder")
-            return
+        q = QApplication(sys.argv)
+        dlg = getExistingDirectories()
+        if dlg.exec_() == QDialog.Accepted:
+            self.raw_folders = dlg.selectedFiles()
 
-        self.dfolder_label['text'] = os.path.basename(self.raw_folder)
+        number_files_selected = 0
+        if self.raw_folders:
+            number_files_selected = len(self.raw_folders)
+
+        self.dfolder_label['text'] = f'Files selected: {number_files_selected}'
         self.button_ms1['state'] = NORMAL
         self.button_ms2['state'] = NORMAL
 
