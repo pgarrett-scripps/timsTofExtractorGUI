@@ -1,11 +1,8 @@
 import logging
 import os
-import tkinter as tk
 from tkinter import filedialog as fd, messagebox
 from tkinter import *
-
-from extract_msn_nopd import run_timstof_conversion
-from timstof_utils import generate_ms1, generate_ms2
+from tdfextractor.ms2_extractor import write_ms2_file
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -93,6 +90,9 @@ class RawFileTinker(Frame):
                 self.button['state'] = NORMAL
                 return
 
+        def generate_ms1(raw_folder):
+            return 'NotImplemented'
+
         gen = generate_ms1(self.raw_folder)
 
         for percent_done in gen:
@@ -129,14 +129,7 @@ class RawFileTinker(Frame):
                 self.button['state'] = NORMAL
                 return
 
-        gen = run_timstof_conversion(self.raw_folder)
-
-        for percent_done in gen:
-            print(percent_done)
-            self.percent_done_ms2_text['text'] = str(round(percent_done, 2)) + "%"
-            self.update()
-
-        messagebox.showinfo("Done!", "File Path:\n" + file_path)
+        write_ms2_file(self.raw_folder)
 
         self.button_ms1['state'] = NORMAL
         self.button_ms2['state'] = NORMAL
