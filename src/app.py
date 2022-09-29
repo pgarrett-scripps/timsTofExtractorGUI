@@ -142,11 +142,11 @@ class RawFileTinker(Frame):
             initialdir='/')
 
         if not os.path.isdir(self.raw_folder) or self.raw_folder == "":
-            messagebox.showinfo("Hmmmm", "Selected Path is not a Directory")
+            messagebox.showinfo("Error", "Selected Path is not a Directory")
             return
 
         if ".d" not in self.raw_folder:
-            messagebox.showinfo("Hmmmm", "Selected Path is not a timsTof .d folder")
+            messagebox.showinfo("Error", "Selected Path is not a timsTof .d folder")
             return
 
         self.dfolder_label['text'] = os.path.basename(self.raw_folder)
