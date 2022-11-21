@@ -13,7 +13,7 @@ How to compile exe:
 > .\dist\app.exe
 
 
-Github Action automatically compiles exe (Depriciated):
+Github Action automatically compiles exe (Depreciated):
 
     TODO: Make custom action to gen exe and publish to github
 
