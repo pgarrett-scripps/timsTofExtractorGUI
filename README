@@ -11,13 +11,3 @@ How to compile exe:
 > pip install -r requirements.txt
 > pyinstaller -F --add-data venv/Lib/site-packages/tdfpy/timsdata.dll;. src\app.py
 > .\dist\app.exe
-
-
-Github Action automatically compiles exe (Depreciated):
-
-    TODO: Make custom action to gen exe and publish to github
-
-    image: https://hub.docker.com/r/cdrx/pyinstaller-windows
-
-        Python version: 3.7.9
-        pyinstaller version: 3.6
