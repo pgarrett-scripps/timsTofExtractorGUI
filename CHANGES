@@ -1,3 +1,4 @@
 1.2.0
-- added dfolder compress feature
-- updated tdfextractor to v0.1.4
+- added dfolder tar archival feature
+- updated tdfextractor to v0.1.7
+- better logging capability

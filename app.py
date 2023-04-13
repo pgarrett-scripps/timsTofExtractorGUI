@@ -1,30 +1,32 @@
 import logging
-import shutil
+import os
 from pathlib import Path
 from tkinter import filedialog as fd, messagebox
 from tkinter import *
 import sys
+import tarfile
 
 from PyQt5.QtWidgets import QFileDialog, QListView, QAbstractItemView, QTreeView, QApplication, QDialog
 from tdfextractor.ms2_extractor import write_ms2_file
 
+exe_dir = os.path.dirname(sys.executable)
+log_file_path = os.path.join(exe_dir, "timsTofExtractorGUI.log")
+
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-    filename='out.log',
+    filename=log_file_path,
     filemode='a'
 )
 
-# redirect stdout and stderr to log file
-logger = logging.getLogger('app')
-logger.info('Start')
+logger = logging.getLogger('timsTofExtractorGUI')
+logger.info('Start timsTofExtractorGUI')
+logger.info(f'log_file_path: {log_file_path}')
 
-# sys.stdout = LoggerWriter(log.debug)
-# sys.stderr = LoggerWriter(log.warning)
 
 class RawFileTinker(Frame):
-    def __init__(self):
-        Frame.__init__(self)
+    def __init__(self, master=None):
+        super().__init__(master)
 
         self.raw_folder = None
         self.generating_file = False
@@ -36,6 +38,11 @@ class RawFileTinker(Frame):
         self.master.columnconfigure(5, weight=1)
         self.grid(sticky=W + E + N + S)
 
+        self.create_widgets()
+
+        self.raw_folders = []
+
+    def create_widgets(self):
         self.button = Button(self, text="Select D folder", command=self.load_file, width=self._frame_width)
         self.button.pack(expand=True)
 
@@ -44,21 +51,24 @@ class RawFileTinker(Frame):
 
         self.ms2_frame = Frame(self)
         self.ms2_frame.pack(expand=True)
+
         self.button_ms2 = Button(self.ms2_frame, text="Generate Ms2 File", command=self.generate_ms2,
                                  width=int(self._frame_width / 2), state=DISABLED)
         self.button_ms2.pack(side=LEFT, expand=True)
+
         self.percent_done_ms2_text = Label(self.ms2_frame, text="0%", width=int(self._frame_width / 2), height=2)
         self.percent_done_ms2_text.pack(side=RIGHT, expand=True)
 
         self.compress_frame = Frame(self)
         self.compress_frame.pack(expand=True)
-        self.button_compress = Button(self.compress_frame, text="Compress D Folder", command=self.compress_dfolder,
-                                 width=int(self._frame_width / 2), state=DISABLED)
-        self.button_compress.pack(side=LEFT, expand=True)
-        self.percent_done_compress_text = Label(self.compress_frame, text="0%", width=int(self._frame_width / 2), height=2)
-        self.percent_done_compress_text.pack(side=RIGHT, expand=True)
 
-        self.raw_folders = []
+        self.button_compress = Button(self.compress_frame, text="Compress D Folder", command=self.compress_dfolder,
+                                      width=int(self._frame_width / 2), state=DISABLED)
+        self.button_compress.pack(side=LEFT, expand=True)
+
+        self.percent_done_compress_text = Label(self.compress_frame, text="0%", width=int(self._frame_width / 2),
+                                                height=2)
+        self.percent_done_compress_text.pack(side=RIGHT, expand=True)
 
     def generate_ms2(self):
 
@@ -67,6 +77,7 @@ class RawFileTinker(Frame):
         self.button['state'] = DISABLED
 
         for i, raw_folder in enumerate(self.raw_folders):
+            logger.info(f'Extracting: {Path(raw_folder).stem}')
             self.dfolder_label['text'] = f'Extracting: {Path(raw_folder).stem}'
             self.percent_done_ms2_text['text'] = f'File {i + 1} of {len(self.raw_folders)}'
             self.update()
@@ -88,9 +99,16 @@ class RawFileTinker(Frame):
         self.button['state'] = DISABLED
 
         for i, raw_folder in enumerate(self.raw_folders):
+            logger.info(f'Archiving: {Path(raw_folder).stem}')
             self.dfolder_label['text'] = f'Extracting: {Path(raw_folder).stem}'
             self.button_compress['text'] = f'File {i + 1} of {len(self.raw_folders)}'
-            shutil.make_archive(raw_folder, 'zip', raw_folder)
+
+            with tarfile.open(raw_folder + '.tar', mode='w') as archive:
+                tdf_file = raw_folder + os.path.sep + 'analysis.tdf'
+                tdf_bin_file = tdf_file + '_bin'
+                archive.add(tdf_file, arcname=os.path.basename(tdf_file))
+                archive.add(tdf_bin_file, arcname=os.path.basename(tdf_bin_file))
+
             self.update()
 
         self.button_compress['text'] = str(round(100.00, 2)) + "%"
