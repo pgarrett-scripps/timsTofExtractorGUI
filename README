@@ -4,10 +4,11 @@ Timstof Extractor GUI
 How to Run:
 > pip clone https://github.com/pgarrett-scripps/timsTofExtractorGUI.git
 > pip install -r requirements.txt
-> python src/app.py
+> python app.py
 
 How to compile exe:
 > pip clone
 > pip install -r requirements.txt
-> pyinstaller -F --add-data venv/Lib/site-packages/tdfpy/timsdata.dll;. src\app.py
+> pyinstaller --onefile --log-level=DEBUG --add-data venv/Lib/site-packages/tdfpy/timsdata.dll;. app.py
 > .\dist\app.exe
+

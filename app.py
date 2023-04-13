@@ -1,4 +1,5 @@
 import logging
+import shutil
 from pathlib import Path
 from tkinter import filedialog as fd, messagebox
 from tkinter import *
@@ -15,8 +16,8 @@ logging.basicConfig(
 )
 
 # redirect stdout and stderr to log file
-log = logging.getLogger('app')
-
+logger = logging.getLogger('app')
+logger.info('Start')
 
 # sys.stdout = LoggerWriter(log.debug)
 # sys.stderr = LoggerWriter(log.warning)
@@ -43,17 +44,25 @@ class RawFileTinker(Frame):
 
         self.ms2_frame = Frame(self)
         self.ms2_frame.pack(expand=True)
-
         self.button_ms2 = Button(self.ms2_frame, text="Generate Ms2 File", command=self.generate_ms2,
                                  width=int(self._frame_width / 2), state=DISABLED)
         self.button_ms2.pack(side=LEFT, expand=True)
-
         self.percent_done_ms2_text = Label(self.ms2_frame, text="0%", width=int(self._frame_width / 2), height=2)
         self.percent_done_ms2_text.pack(side=RIGHT, expand=True)
+
+        self.compress_frame = Frame(self)
+        self.compress_frame.pack(expand=True)
+        self.button_compress = Button(self.compress_frame, text="Compress D Folder", command=self.compress_dfolder,
+                                 width=int(self._frame_width / 2), state=DISABLED)
+        self.button_compress.pack(side=LEFT, expand=True)
+        self.percent_done_compress_text = Label(self.compress_frame, text="0%", width=int(self._frame_width / 2), height=2)
+        self.percent_done_compress_text.pack(side=RIGHT, expand=True)
+
         self.raw_folders = []
 
     def generate_ms2(self):
 
+        self.button_compress['state'] = DISABLED
         self.button_ms2['state'] = DISABLED
         self.button['state'] = DISABLED
 
@@ -68,6 +77,28 @@ class RawFileTinker(Frame):
 
         messagebox.showinfo('Done!', 'Ms2 Files created!')
 
+        self.button_compress['state'] = NORMAL
+        self.button_ms2['state'] = NORMAL
+        self.button['state'] = NORMAL
+
+    def compress_dfolder(self):
+
+        self.button_compress['state'] = DISABLED
+        self.button_ms2['state'] = DISABLED
+        self.button['state'] = DISABLED
+
+        for i, raw_folder in enumerate(self.raw_folders):
+            self.dfolder_label['text'] = f'Extracting: {Path(raw_folder).stem}'
+            self.button_compress['text'] = f'File {i + 1} of {len(self.raw_folders)}'
+            shutil.make_archive(raw_folder, 'zip', raw_folder)
+            self.update()
+
+        self.button_compress['text'] = str(round(100.00, 2)) + "%"
+        self.update()
+
+        messagebox.showinfo('Done!', 'Compressed files created!')
+
+        self.button_compress['state'] = NORMAL
         self.button_ms2['state'] = NORMAL
         self.button['state'] = NORMAL
 
@@ -93,6 +124,7 @@ class RawFileTinker(Frame):
 
         self.dfolder_label['text'] = f'Files selected: {number_files_selected}'
         self.button_ms2['state'] = NORMAL
+        self.button_compress['state'] = NORMAL
 
 
 if __name__ == "__main__":
