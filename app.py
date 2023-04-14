@@ -81,8 +81,8 @@ class RawFileTinker(Frame):
 
         for i, raw_folder in enumerate(self.raw_folders):
 
-            logger.info(f'Generating MS2: {raw_folder}')
-            print(f'Generating MS2: {raw_folder}')
+            logger.info(f'Creating MS2 file for {raw_folder}')
+            print(f'Creating MS2 file for {raw_folder}')
 
             self.dfolder_label['text'] = f'Generating MS2: {Path(raw_folder).stem}'
             self.percent_done_ms2_text['text'] = f'File {i + 1} of {len(self.raw_folders)}'
@@ -90,8 +90,8 @@ class RawFileTinker(Frame):
 
             write_ms2_file(raw_folder)
 
-            logger.info(f'Done. Path to MS2: {raw_folder + os.path.sep + Path(raw_folder).stem + ".ms2"}')
-            print(f'Done. Path to MS2: {raw_folder + os.path.sep + Path(raw_folder).stem + ".ms2"}')
+            logger.info(f'Path to MS2: {raw_folder + os.path.sep + Path(raw_folder).stem + ".ms2"}')
+            print(f'Path to MS2: {raw_folder + os.path.sep + Path(raw_folder).stem + ".ms2"}')
 
         self.update()
 
@@ -111,8 +111,8 @@ class RawFileTinker(Frame):
         self.button['state'] = DISABLED
 
         for i, raw_folder in enumerate(self.raw_folders):
-            logger.info(f'Tarballing: {raw_folder}')
-            print(f'Tarballing: {raw_folder}')
+            logger.info(f'Creating tar file for {raw_folder}')
+            print(f'Creating tar file for {raw_folder}')
 
             self.dfolder_label['text'] = f'Tarballing: {Path(raw_folder).stem}'
             self.percent_done_compress_text['text'] = f'File {i + 1} of {len(self.raw_folders)}'
@@ -122,8 +122,8 @@ class RawFileTinker(Frame):
                         file_path = os.path.join(root, file)
                         tar.add(file_path, arcname=os.path.relpath(file_path, raw_folder))
 
-            logger.info(f'Done. Path to tarball: {raw_folder + ".tar"}')
-            print(f'Done. Path to tarball: {raw_folder + ".tar"}')
+            logger.info(f'Path to tar file: {raw_folder + ".tar"}')
+            print(f'Path to tar file: {raw_folder + ".tar"}')
 
             self.update()
 
