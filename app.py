@@ -20,8 +20,11 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger('timsTofExtractorGUI')
+
 logger.info('Start timsTofExtractorGUI')
+print('Start timsTofExtractorGUI')
 logger.info(f'log_file_path: {log_file_path}')
+print(f'log_file_path: {log_file_path}')
 
 
 class RawFileTinker(Frame):
@@ -33,7 +36,7 @@ class RawFileTinker(Frame):
 
         self._frame_width = 80
 
-        self.master.title("RawFileExtractor")
+        self.master.title("timsTofExtractorGUI")
         self.master.rowconfigure(5, weight=1)
         self.master.columnconfigure(5, weight=1)
         self.grid(sticky=W + E + N + S)
@@ -52,21 +55,21 @@ class RawFileTinker(Frame):
         self.ms2_frame = Frame(self)
         self.ms2_frame.pack(expand=True)
 
-        self.button_ms2 = Button(self.ms2_frame, text="Generate Ms2 File", command=self.generate_ms2,
+        self.button_ms2 = Button(self.ms2_frame, text="Generate Ms2 Files", command=self.generate_ms2,
                                  width=int(self._frame_width / 2), state=DISABLED)
         self.button_ms2.pack(side=LEFT, expand=True)
 
-        self.percent_done_ms2_text = Label(self.ms2_frame, text="0%", width=int(self._frame_width / 2), height=2)
+        self.percent_done_ms2_text = Label(self.ms2_frame, text="", width=int(self._frame_width / 2), height=2)
         self.percent_done_ms2_text.pack(side=RIGHT, expand=True)
 
         self.compress_frame = Frame(self)
         self.compress_frame.pack(expand=True)
 
-        self.button_compress = Button(self.compress_frame, text="Compress D Folder", command=self.compress_dfolder,
+        self.button_compress = Button(self.compress_frame, text="Tarball D Folders", command=self.compress_dfolder,
                                       width=int(self._frame_width / 2), state=DISABLED)
         self.button_compress.pack(side=LEFT, expand=True)
 
-        self.percent_done_compress_text = Label(self.compress_frame, text="0%", width=int(self._frame_width / 2),
+        self.percent_done_compress_text = Label(self.compress_frame, text="", width=int(self._frame_width / 2),
                                                 height=2)
         self.percent_done_compress_text.pack(side=RIGHT, expand=True)
 
@@ -77,20 +80,29 @@ class RawFileTinker(Frame):
         self.button['state'] = DISABLED
 
         for i, raw_folder in enumerate(self.raw_folders):
-            logger.info(f'Extracting: {Path(raw_folder).stem}')
-            self.dfolder_label['text'] = f'Extracting: {Path(raw_folder).stem}'
+
+            logger.info(f'Generating MS2: {raw_folder}')
+            print(f'Generating MS2: {raw_folder}')
+
+            self.dfolder_label['text'] = f'Generating MS2: {Path(raw_folder).stem}'
             self.percent_done_ms2_text['text'] = f'File {i + 1} of {len(self.raw_folders)}'
             self.update()
+
             write_ms2_file(raw_folder)
 
-        self.percent_done_ms2_text['text'] = str(round(100.00, 2)) + "%"
+            logger.info(f'Done. Path to MS2: {raw_folder + os.path.sep + Path(raw_folder).stem + ".ms2"}')
+            print(f'Done. Path to MS2: {raw_folder + os.path.sep + Path(raw_folder).stem + ".ms2"}')
+
         self.update()
 
-        messagebox.showinfo('Done!', 'Ms2 Files created!')
+        messagebox.showinfo('Done!', f'Generated {len(self.raw_folders)} MS2 Files')
 
         self.button_compress['state'] = NORMAL
         self.button_ms2['state'] = NORMAL
         self.button['state'] = NORMAL
+
+        self.dfolder_label['text'] = f'Files selected: {len(self.raw_folders)}'
+
 
     def compress_dfolder(self):
 
@@ -99,26 +111,32 @@ class RawFileTinker(Frame):
         self.button['state'] = DISABLED
 
         for i, raw_folder in enumerate(self.raw_folders):
-            logger.info(f'Archiving: {Path(raw_folder).stem}')
-            self.dfolder_label['text'] = f'Extracting: {Path(raw_folder).stem}'
-            self.button_compress['text'] = f'File {i + 1} of {len(self.raw_folders)}'
+            logger.info(f'Tarballing: {raw_folder}')
+            print(f'Tarballing: {raw_folder}')
 
-            with tarfile.open(raw_folder + '.tar', mode='w') as archive:
-                tdf_file = raw_folder + os.path.sep + 'analysis.tdf'
-                tdf_bin_file = tdf_file + '_bin'
-                archive.add(tdf_file, arcname=os.path.basename(tdf_file))
-                archive.add(tdf_bin_file, arcname=os.path.basename(tdf_bin_file))
+            self.dfolder_label['text'] = f'Tarballing: {Path(raw_folder).stem}'
+            self.percent_done_compress_text['text'] = f'File {i + 1} of {len(self.raw_folders)}'
+            with tarfile.open(raw_folder + '.tar', "w") as tar:
+                for root, _, files in os.walk(raw_folder):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        tar.add(file_path, arcname=os.path.relpath(file_path, raw_folder))
+
+            logger.info(f'Done. Path to tarball: {raw_folder + ".tar"}')
+            print(f'Done. Path to tarball: {raw_folder + ".tar"}')
 
             self.update()
 
-        self.button_compress['text'] = str(round(100.00, 2)) + "%"
         self.update()
 
-        messagebox.showinfo('Done!', 'Compressed files created!')
+        messagebox.showinfo('Done!', f'Tarballed {len(self.raw_folders)} files')
 
         self.button_compress['state'] = NORMAL
         self.button_ms2['state'] = NORMAL
         self.button['state'] = NORMAL
+
+        self.dfolder_label['text'] = f'Files selected: {len(self.raw_folders)}'
+
 
     def load_file(self):
 
@@ -139,6 +157,8 @@ class RawFileTinker(Frame):
         number_files_selected = 0
         if self.raw_folders:
             number_files_selected = len(self.raw_folders)
+            logger.info(f'Files Selected: {self.raw_folders}')
+            print(f'Files Selected: {self.raw_folders}')
 
         self.dfolder_label['text'] = f'Files selected: {number_files_selected}'
         self.button_ms2['state'] = NORMAL

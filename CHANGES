@@ -2,3 +2,9 @@
 - added dfolder tar archival feature
 - updated tdfextractor to v0.1.7
 - better logging capability
+1.2.1
+- logging
+1.2.2
+- added limited console output
+- ui tweaks
+- tarball all content in d folder
