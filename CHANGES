@@ -8,3 +8,8 @@
 - added limited console output
 - ui tweaks
 - tarball all content in d folder
+1.2.3
+- changed tar file structure
+2.0.0
+- added PRM support
+- new GUI format
