@@ -1,11 +1,13 @@
-Timstof Extractor GUI
+# Timstof Extractor GUI
 
-How to Run:
+## Download the latest release under the releases tab; The GUI is simply a .exe file.
+
+## How to Run:
 > pip clone https://github.com/pgarrett-scripps/timsTofExtractorGUI.git
 > pip install -r requirements.txt
 > python app.py
 
-How to compile exe:
+## How to compile exe:
 > pip clone
 > pip install -r requirements.txt
 > pyinstaller --onefile --log-level=DEBUG --add-data venv/Lib/site-packages/tdfpy/timsdata.dll;. app.py
