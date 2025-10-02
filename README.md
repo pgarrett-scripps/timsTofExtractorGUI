@@ -18,3 +18,8 @@ Simply double click on the .exe file to run the program.
 > pyinstaller --onefile --log-level=DEBUG --add-data venv/Lib/site-packages/tdfpy/timsdata.dll;. app.py
 > .\dist\app.exe
 
+
+### How to compile linux executable
+> pyinstaller --onefile --log-level=DEBUG --add-data=".venv/lib/python3.12/site-packages/tdfpy/libtimsdata.so:." tar_app.py
+
+
